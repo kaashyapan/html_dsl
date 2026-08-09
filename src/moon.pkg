@@ -1,0 +1,8 @@
+import {
+}
+
+supported_targets = "+all"
+
+options(
+  "is-main": false,
+)
