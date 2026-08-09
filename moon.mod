@@ -13,6 +13,6 @@ license = "Apache-2.0"
 
 keywords = [ "html", "dsl", "svg" ]
 
-description = "Type safe HTML & SVG to build html for server rendered HTML. Modelled after Rabbita and Luna."
+description = "Type safe HTML & SVG DSL to build html for server rendered HTML. Modelled after Rabbita and Luna."
 
 source = "src"
