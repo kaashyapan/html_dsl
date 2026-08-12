@@ -1,9 +1,6 @@
 name = "kaashyapan/html_dsl"
 
-version = "0.1.0"
-
-import {
-}
+version = "0.2.0"
 
 readme = "README.mbt.md"
 

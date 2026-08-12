@@ -1,0 +1,412 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "kaashyapan/html_dsl"
+
+// Values
+pub fn a(id? : String, href? : String, class? : String, target? : Target?, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn abbr(id? : String, class? : String, title? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn address(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn article(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn aside(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn audio(id? : String, class? : String, src? : String, controls? : Bool, autoplay? : Bool, loop_? : Bool, muted? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn b(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn blockquote(id? : String, class? : String, cite? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn body(attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn br() -> Html
+
+pub fn button(id? : String, on_click_? : String, type_? : InputType, class? : String, disabled? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn canvas(id? : String, class? : String, width? : Int, height? : Int, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn caption(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn circle(cx? : String, cy? : String, r? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn clip_path(id? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn code(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn col(span? : Int, attrs? : Array[Attr]) -> Html
+
+pub fn colgroup(attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn datalist(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn dd(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn defs(attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn desc(attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn details(id? : String, class? : String, open? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn div(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn dl(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn dt(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn ellipse(cx? : String, cy? : String, rx? : String, ry? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn em(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn embed(src~ : String, type_? : String) -> Html
+
+pub fn escape(String) -> String
+
+pub fn fieldset(id? : String, class? : String, disabled? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn figcaption(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn figure(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn footer(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn form(id? : String, class? : String, action? : String, method_? : String, attrs? : Array[Attr], on_submit_? : String, Array[Html]) -> Html
+
+pub fn g(attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn h1(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn h2(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn h3(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn h4(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn h5(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn h6(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn head(Array[Html]) -> Html
+
+pub fn header(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn hr() -> Html
+
+pub fn html_el(lang? : String, Array[Html]) -> Html
+
+pub fn i(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn iframe(id? : String, class? : String, src~ : String, title? : String, width? : Int, height? : Int, attrs? : Array[Attr]) -> Html
+
+pub fn img(id? : String, class? : String, src~ : String, alt? : String, width? : Int, height? : Int, attrs? : Array[Attr]) -> Html
+
+pub fn inline_script(String) -> Html
+
+pub fn input(name? : String, class? : String, id? : String, type_? : InputType, value? : String, placeholder? : String, on_change? : String?, required? : Bool, disabled? : Bool, checked? : Bool, attrs? : Array[Attr]) -> Html
+
+pub fn label(id? : String, class? : String, for_? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn legend(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn li(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn line(x1? : String, y1? : String, x2? : String, y2? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn linear_gradient(id? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn link(href~ : String, rel~ : String, type_? : String, attrs? : Array[Attr]) -> Html
+
+pub fn main_(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn mark(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn mask(id? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn meta(charset? : String, content? : String, name? : String, attrs? : Array[Attr]) -> Html
+
+pub fn meter(id? : String, class? : String, value? : String, min? : String, max? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn nav(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn node(String, Array[Attr], Array[Html]) -> Html
+
+pub fn ol(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn on_blur(String) -> Attr
+
+pub fn on_change(String) -> Attr
+
+pub fn on_click(String) -> Attr
+
+pub fn on_dblclick(String) -> Attr
+
+pub fn on_focus(String) -> Attr
+
+pub fn on_input(String) -> Attr
+
+pub fn on_keydown(String) -> Attr
+
+pub fn on_keypress(String) -> Attr
+
+pub fn on_keyup(String) -> Attr
+
+pub fn on_mouseenter(String) -> Attr
+
+pub fn on_mouseleave(String) -> Attr
+
+pub fn on_submit(String) -> Attr
+
+pub fn optgroup(label~ : String, disabled? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn option(value? : String, selected? : Bool, disabled? : Bool, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn p(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn path(d? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn polygon(points? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn polyline(points? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn pre(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn progress(id? : String, class? : String, value? : String, max? : String, attrs? : Array[Attr]) -> Html
+
+pub fn q(id? : String, class? : String, cite? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn radial_gradient(id? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn rect(x? : String, y? : String, width? : String, height? : String, rx? : String, ry? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn render(Html) -> String
+
+pub fn script(async_? : Bool, defer_? : Bool, type_? : String, src~ : String) -> Html
+
+pub fn section(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn select(name? : String, id? : String, class? : String, multiple? : Bool, required? : Bool, disabled? : Bool, on_change? : String?, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn small(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn source_(src~ : String, type_? : String) -> Html
+
+pub fn span(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn stop(offset? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn strong(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn sub(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn summary(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn sup(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn svg(width? : String, height? : String, view_box? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn svg_on_click(String) -> Attr
+
+pub fn svg_prop(String, String) -> SvgAttr
+
+pub fn svg_style(Array[(String, String)]) -> SvgAttr
+
+pub fn svg_title(attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn table(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn tbody(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn td(id? : String, class? : String, colspan? : Int, rowspan? : Int, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn text(String) -> Html
+
+pub fn text_(x? : String, y? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn textarea(name? : String, id? : String, class? : String, value? : String, placeholder? : String, rows? : Int, cols? : Int, on_change? : String?, required? : Bool, disabled? : Bool, attrs? : Array[Attr]) -> Html
+
+pub fn tfoot(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn th(id? : String, class? : String, colspan? : Int, rowspan? : Int, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn thead(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn time(id? : String, class? : String, datetime? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn title(String) -> Html
+
+pub fn tr(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn track(src~ : String, kind? : String, label? : String) -> Html
+
+pub fn tspan(x? : String, y? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn ul(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn use_(href? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
+
+pub fn video(id? : String, class? : String, src? : String, controls? : Bool, autoplay? : Bool, loop_? : Bool, muted? : Bool, poster? : String, width? : Int, height? : Int, attrs? : Array[Attr], Array[Html]) -> Html
+
+// Errors
+
+// Types and methods
+pub(all) enum Attr {
+  Id(String)
+  Class(String)
+  Href(String)
+  Src(String)
+  Alt(String)
+  Type_(String)
+  Value(String)
+  Placeholder(String)
+  Name(String)
+  For_(String)
+  Action(String)
+  Method(String)
+  Charset(String)
+  Rel(String)
+  Lang(String)
+  Disabled(Bool)
+  Checked(Bool)
+  Required(Bool)
+  Readonly(Bool)
+  AutoFocus(Bool)
+  Multiple(Bool)
+  Target_(Target)
+  Defer(Bool)
+  Async(Bool)
+  Rows(Int)
+  Cols(Int)
+  Controls(Bool)
+  Autoplay(Bool)
+  Loop_(Bool)
+  Muted(Bool)
+  Poster(String)
+  Min(String)
+  Max(String)
+  Step(String)
+  Selected(Bool)
+  Label_(String)
+  DateTime(String)
+  Colspan(Int)
+  Rowspan(Int)
+  Width(Int)
+  Height(Int)
+  Title_(String)
+  Cite(String)
+  Style(Array[(String, String)])
+  Aria(String, String)
+  Data(String, String)
+  Prop(String, String)
+  On(Event)
+  OnRawEvent(String, String)
+}
+
+pub(all) enum Event {
+  Click(String)
+  DblClick(String)
+  MouseEnter(String)
+  MouseLeave(String)
+  Change(String)
+  Input(String)
+  Submit(String)
+  Focus(String)
+  Blur(String)
+  KeyDown(String)
+  KeyUp(String)
+  KeyPress(String)
+}
+
+pub enum Html {
+  Node(String, Array[Attr], Array[Html])
+  Text(String)
+  Fragment(Array[Html])
+  Unsafe(String)
+  Nothing
+}
+
+pub(all) enum InputType {
+  Text
+  Password
+  Email
+  Number
+  Checkbox
+  Radio
+  File
+  Hidden
+  Submit
+  Reset
+  Button
+  Range
+  Date
+  Color
+  Search
+  Tel
+  Url
+}
+
+pub(all) enum SvgAttr {
+  X(String)
+  Y(String)
+  X1(String)
+  Y1(String)
+  X2(String)
+  Y2(String)
+  Cx(String)
+  Cy(String)
+  R(String)
+  Rx(String)
+  Ry(String)
+  D(String)
+  Points(String)
+  Width(String)
+  Height(String)
+  ViewBox(String)
+  PreserveAspectRatio(String)
+  Fill(String)
+  FillOpacity(String)
+  FillRule(String)
+  Stroke(String)
+  StrokeWidth(String)
+  StrokeOpacity(String)
+  StrokeLinecap(String)
+  StrokeLinejoin(String)
+  StrokeDasharray(String)
+  StrokeDashoffset(String)
+  Opacity(String)
+  Transform(String)
+  TransformOrigin(String)
+  Offset(String)
+  StopColor(String)
+  StopOpacity(String)
+  GradientUnits(String)
+  GradientTransform(String)
+  PatternUnits(String)
+  PatternContentUnits(String)
+  PatternTransform(String)
+  ClipPath(String)
+  ClipRule(String)
+  Mask(String)
+  MaskUnits(String)
+  MarkerStart(String)
+  MarkerMid(String)
+  MarkerEnd(String)
+  FontFamily(String)
+  FontSize(String)
+  FontWeight(String)
+  TextAnchor(String)
+  DominantBaseline(String)
+  Role(String)
+  AriaLabel(String)
+  Custom(String, String)
+}
+
+pub(all) enum Target {
+  Self_
+  Blank
+  Parent
+  Top
+}
+
+// Type aliases
+
+// Traits

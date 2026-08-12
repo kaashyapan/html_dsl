@@ -81,7 +81,7 @@ pub(all) enum Event {
 }
 
 ///|
-/// HTML attribute — either a static property/style or a live event handler.
+/// HTML attribute — either a static property/style or a event handler.
 /// `Attr` values are order-independent; `render_attr` decides how each one
 /// is serialized inside a tag's opening bracket.
 pub(all) enum Attr {
@@ -131,10 +131,12 @@ pub(all) enum Attr {
   Height(Int)
   Title_(String) // "title" clashes with the `title` element builder
   Cite(String)
-
   // ── style ─────────────────────────────────────────────────────────────
   // inline styles as (property, value) pairs, e.g. [("color","red")]
   Style(Array[(String, String)])
+  // Shortcuts to prefixxed attributes
+  Aria(String, String)
+  Data(String, String)
   // arbitrary attribute for anything not listed above
   Prop(String, String)
   // ── event handlers ────────────────────────────────────────────────────
@@ -144,7 +146,7 @@ pub(all) enum Attr {
 
 ///|
 /// HTML node — the tree that `render` turns into a string.
-pub(all) enum Html {
+pub enum Html {
   /// An element: tag name, attributes, children
   Node(String, Array[Attr], Array[Html])
   /// Raw escaped text content
@@ -235,53 +237,6 @@ pub fn on_keypress(msg : String) -> Attr {
   On(Event::KeyPress(msg))
 }
 
-///|
-/// Style helper: takes (key, value) pairs, e.g.
-/// `style([("color", "red"), ("font-weight", "bold")])`.
-pub fn style(pairs : Array[(String, String)]) -> Attr {
-  Style(pairs)
-}
-
-///|
-/// Build a node manually — escape hatch for any tag not covered by a
-/// dedicated builder function below.
-///
-/// Example:
-/// `node("marquee", [Attr::Prop("behavior", "scroll")], [text("Hi")])`
-/// -> `<marquee behavior="scroll">Hi</marquee>`
-pub fn node(tag : String, attrs : Array[Attr], children : Array[Html]) -> Html {
-  Node(tag, attrs, children)
-}
-
-///|
-/// Plain (HTML-escaped) text node.
-///
-/// Example:
-/// `text("A & B")` renders as `A &amp; B`
-pub fn text(s : String) -> Html {
-  Text(s)
-}
-
-///|
-/// Dummy node that produces no html. Handy as the `else` branch of a
-/// conditional when only one side should render something.
-///
-/// Example:
-/// `if is_logged_in { span([text("Hi!")]) } else { nothing() }`
-/// -> `` (empty string) when `is_logged_in` is `false`
-pub fn nothing() -> Html {
-  Nothing
-}
-
-///|
-/// A fragment to render an array of valid Html with no wrapping element.
-///
-/// Example:
-/// `fragment([text("A"), text("B")])` -> `AB`
-pub fn fragment(children : Array[Html]) -> Html {
-  Fragment(children)
-}
-
 // =============================================================================
 // Element builders — one per common HTML tag
 // mirrors rabbita's approach: labeled args for attrs, positional for children
@@ -301,11 +256,10 @@ pub fn fragment(children : Array[Html]) -> Html {
 pub fn div(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("div", build_attrs(id~, class~, style~, attrs~), children)
+  Node("div", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -317,11 +271,10 @@ pub fn div(
 pub fn span(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("span", build_attrs(id~, class~, style~, attrs~), children)
+  Node("span", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -332,11 +285,10 @@ pub fn span(
 pub fn p(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("p", build_attrs(id~, class~, style~, attrs~), children)
+  Node("p", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -347,11 +299,10 @@ pub fn p(
 pub fn h1(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h1", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h1", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -362,11 +313,10 @@ pub fn h1(
 pub fn h2(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h2", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h2", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -377,11 +327,10 @@ pub fn h2(
 pub fn h3(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h3", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h3", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -392,11 +341,10 @@ pub fn h3(
 pub fn h4(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h4", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h4", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -407,11 +355,10 @@ pub fn h4(
 pub fn h5(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h5", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h5", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -422,11 +369,10 @@ pub fn h5(
 pub fn h6(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("h6", build_attrs(id~, class~, style~, attrs~), children)
+  Node("h6", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -438,11 +384,10 @@ pub fn h6(
 pub fn nav(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("nav", build_attrs(id~, class~, style~, attrs~), children)
+  Node("nav", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -454,11 +399,10 @@ pub fn nav(
 pub fn header(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("header", build_attrs(id~, class~, style~, attrs~), children)
+  Node("header", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -469,11 +413,10 @@ pub fn header(
 pub fn footer(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("footer", build_attrs(id~, class~, style~, attrs~), children)
+  Node("footer", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -487,11 +430,10 @@ pub fn footer(
 pub fn section(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("section", build_attrs(id~, class~, style~, attrs~), children)
+  Node("section", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -504,11 +446,10 @@ pub fn section(
 pub fn article(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("article", build_attrs(id~, class~, style~, attrs~), children)
+  Node("article", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -520,11 +461,10 @@ pub fn article(
 pub fn aside(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("aside", build_attrs(id~, class~, style~, attrs~), children)
+  Node("aside", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -537,11 +477,10 @@ pub fn aside(
 pub fn main_(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("main", build_attrs(id~, class~, style~, attrs~), children)
+  Node("main", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -553,11 +492,10 @@ pub fn main_(
 pub fn ul(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("ul", build_attrs(id~, class~, style~, attrs~), children)
+  Node("ul", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -569,11 +507,10 @@ pub fn ul(
 pub fn ol(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("ol", build_attrs(id~, class~, style~, attrs~), children)
+  Node("ol", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -584,11 +521,10 @@ pub fn ol(
 pub fn li(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("li", build_attrs(id~, class~, style~, attrs~), children)
+  Node("li", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -601,11 +537,10 @@ pub fn li(
 pub fn dl(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("dl", build_attrs(id~, class~, style~, attrs~), children)
+  Node("dl", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -616,11 +551,10 @@ pub fn dl(
 pub fn dt(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("dt", build_attrs(id~, class~, style~, attrs~), children)
+  Node("dt", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -632,11 +566,10 @@ pub fn dt(
 pub fn dd(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("dd", build_attrs(id~, class~, style~, attrs~), children)
+  Node("dd", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -649,11 +582,10 @@ pub fn dd(
 pub fn table(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("table", build_attrs(id~, class~, style~, attrs~), children)
+  Node("table", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -664,11 +596,10 @@ pub fn table(
 pub fn caption(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("caption", build_attrs(id~, class~, style~, attrs~), children)
+  Node("caption", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -680,11 +611,10 @@ pub fn caption(
 pub fn thead(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("thead", build_attrs(id~, class~, style~, attrs~), children)
+  Node("thead", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -696,11 +626,10 @@ pub fn thead(
 pub fn tbody(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("tbody", build_attrs(id~, class~, style~, attrs~), children)
+  Node("tbody", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -712,11 +641,10 @@ pub fn tbody(
 pub fn tfoot(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("tfoot", build_attrs(id~, class~, style~, attrs~), children)
+  Node("tfoot", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -728,11 +656,10 @@ pub fn tfoot(
 pub fn tr(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("tr", build_attrs(id~, class~, style~, attrs~), children)
+  Node("tr", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -745,13 +672,12 @@ pub fn tr(
 pub fn th(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   colspan? : Int = 0,
   rowspan? : Int = 0,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if colspan > 0 {
     base.push(Colspan(colspan))
   }
@@ -771,13 +697,12 @@ pub fn th(
 pub fn td(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   colspan? : Int = 0,
   rowspan? : Int = 0,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if colspan > 0 {
     base.push(Colspan(colspan))
   }
@@ -801,12 +726,11 @@ pub fn a(
   id? : String = "",
   href? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   target? : Target? = None,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if href != "" {
     base.push(Href(href))
   }
@@ -826,11 +750,10 @@ pub fn a(
 pub fn i(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("i", build_attrs(id~, class~, style~, attrs~), children)
+  Node("i", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -841,11 +764,10 @@ pub fn i(
 pub fn strong(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("strong", build_attrs(id~, class~, style~, attrs~), children)
+  Node("strong", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -856,11 +778,10 @@ pub fn strong(
 pub fn em(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("em", build_attrs(id~, class~, style~, attrs~), children)
+  Node("em", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -871,11 +792,10 @@ pub fn em(
 pub fn b(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("b", build_attrs(id~, class~, style~, attrs~), children)
+  Node("b", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -886,11 +806,10 @@ pub fn b(
 pub fn small(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("small", build_attrs(id~, class~, style~, attrs~), children)
+  Node("small", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -901,11 +820,10 @@ pub fn small(
 pub fn mark(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("mark", build_attrs(id~, class~, style~, attrs~), children)
+  Node("mark", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -916,11 +834,10 @@ pub fn mark(
 pub fn sub(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("sub", build_attrs(id~, class~, style~, attrs~), children)
+  Node("sub", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -931,11 +848,10 @@ pub fn sub(
 pub fn sup(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("sup", build_attrs(id~, class~, style~, attrs~), children)
+  Node("sup", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -946,11 +862,10 @@ pub fn sup(
 pub fn code(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("code", build_attrs(id~, class~, style~, attrs~), children)
+  Node("code", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -963,11 +878,10 @@ pub fn code(
 pub fn pre(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("pre", build_attrs(id~, class~, style~, attrs~), children)
+  Node("pre", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -980,12 +894,11 @@ pub fn pre(
 pub fn blockquote(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   cite? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if cite != "" {
     base.push(Cite(cite))
   }
@@ -1001,12 +914,11 @@ pub fn blockquote(
 pub fn q(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   cite? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if cite != "" {
     base.push(Cite(cite))
   }
@@ -1023,12 +935,11 @@ pub fn q(
 pub fn abbr(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   title? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if title != "" {
     base.push(Title_(title))
   }
@@ -1045,12 +956,11 @@ pub fn abbr(
 pub fn time(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   datetime? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if datetime != "" {
     base.push(DateTime(datetime))
   }
@@ -1065,11 +975,10 @@ pub fn time(
 pub fn address(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("address", build_attrs(id~, class~, style~, attrs~), children)
+  Node("address", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1082,11 +991,10 @@ pub fn address(
 pub fn figure(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("figure", build_attrs(id~, class~, style~, attrs~), children)
+  Node("figure", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1097,11 +1005,10 @@ pub fn figure(
 pub fn figcaption(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("figcaption", build_attrs(id~, class~, style~, attrs~), children)
+  Node("figcaption", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1114,12 +1021,11 @@ pub fn figcaption(
 pub fn details(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   open? : Bool = false,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if open {
     base.push(Prop("open", "open"))
   }
@@ -1134,11 +1040,10 @@ pub fn details(
 pub fn summary(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("summary", build_attrs(id~, class~, style~, attrs~), children)
+  Node("summary", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1151,13 +1056,14 @@ pub fn summary(
 pub fn button(
   id? : String = "",
   on_click_? : String = "",
+  type_? : InputType = Button,
   class? : String = "",
-  style? : Array[(String, String)] = [],
   disabled? : Bool = false,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
+  base.push(Type_(input_type_to_string(type_)))
   if on_click_ != "" {
     base.push(on_click(on_click_))
   }
@@ -1178,8 +1084,7 @@ pub fn input(
   name? : String = "",
   class? : String = "",
   id? : String = "",
-  style? : Array[(String, String)] = [],
-  input_type? : InputType = Text,
+  type_? : InputType = Text,
   value? : String = "",
   placeholder? : String = "",
   on_change? : String? = None,
@@ -1188,8 +1093,8 @@ pub fn input(
   checked? : Bool = false,
   attrs? : Array[Attr] = [],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
-  base.push(Type_(input_type_to_string(input_type)))
+  let base = build_attrs(id~, class~, attrs~)
+  base.push(Type_(input_type_to_string(type_)))
   if value != "" {
     base.push(Value(value))
   }
@@ -1227,7 +1132,6 @@ pub fn textarea(
   name? : String = "",
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   value? : String = "",
   placeholder? : String = "",
   rows? : Int = 0,
@@ -1237,7 +1141,7 @@ pub fn textarea(
   disabled? : Bool = false,
   attrs? : Array[Attr] = [],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if name != "" {
     base.push(Name(name))
   }
@@ -1274,7 +1178,6 @@ pub fn select(
   name? : String = "",
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   multiple? : Bool = false,
   required? : Bool = false,
   disabled? : Bool = false,
@@ -1282,7 +1185,7 @@ pub fn select(
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if name != "" {
     base.push(Name(name))
   }
@@ -1358,12 +1261,11 @@ pub fn optgroup(
 pub fn fieldset(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   disabled? : Bool = false,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if disabled {
     base.push(Disabled(true))
   }
@@ -1378,11 +1280,10 @@ pub fn fieldset(
 pub fn legend(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("legend", build_attrs(id~, class~, style~, attrs~), children)
+  Node("legend", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1395,12 +1296,11 @@ pub fn legend(
 pub fn label(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   for_? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if for_ != "" {
     base.push(For_(for_))
   }
@@ -1417,11 +1317,10 @@ pub fn label(
 pub fn datalist(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  Node("datalist", build_attrs(id~, class~, style~, attrs~), children)
+  Node("datalist", build_attrs(id~, class~, attrs~), children)
 }
 
 ///|
@@ -1435,14 +1334,13 @@ pub fn datalist(
 pub fn form(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   action? : String = "",
   method_? : String = "",
   attrs? : Array[Attr] = [],
   on_submit_? : String = "",
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if action != "" {
     base.push(Action(action))
   }
@@ -1486,14 +1384,13 @@ pub fn hr() -> Html {
 pub fn img(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   src~ : String,
   alt? : String = "",
   width? : Int = 0,
   height? : Int = 0,
   attrs? : Array[Attr] = [],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   base.push(Src(src))
   base.push(Alt(alt))
   if width > 0 {
@@ -1515,13 +1412,12 @@ pub fn img(
 pub fn canvas(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   width? : Int = 0,
   height? : Int = 0,
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if width > 0 {
     base.push(Width(width))
   }
@@ -1540,14 +1436,13 @@ pub fn canvas(
 pub fn iframe(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   src~ : String,
   title? : String = "",
   width? : Int = 0,
   height? : Int = 0,
   attrs? : Array[Attr] = [],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   base.push(Src(src))
   if title != "" {
     base.push(Title_(title))
@@ -1571,7 +1466,6 @@ pub fn iframe(
 pub fn video(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   src? : String = "",
   controls? : Bool = true,
   autoplay? : Bool = false,
@@ -1583,7 +1477,7 @@ pub fn video(
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if src != "" {
     base.push(Src(src))
   }
@@ -1621,7 +1515,6 @@ pub fn video(
 pub fn audio(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   src? : String = "",
   controls? : Bool = true,
   autoplay? : Bool = false,
@@ -1630,7 +1523,7 @@ pub fn audio(
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if src != "" {
     base.push(Src(src))
   }
@@ -1729,12 +1622,11 @@ pub fn colgroup(attrs? : Array[Attr] = [], children : Array[Html]) -> Html {
 pub fn progress(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   value? : String = "",
   max? : String = "",
   attrs? : Array[Attr] = [],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if value != "" {
     base.push(Value(value))
   }
@@ -1754,14 +1646,13 @@ pub fn progress(
 pub fn meter(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   value? : String = "",
   min? : String = "",
   max? : String = "",
   attrs? : Array[Attr] = [],
   children : Array[Html],
 ) -> Html {
-  let base = build_attrs(id~, class~, style~, attrs~)
+  let base = build_attrs(id~, class~, attrs~)
   if value != "" {
     base.push(Value(value))
   }
@@ -1936,18 +1827,15 @@ fn target_to_string(t : Target) -> String {
 fn build_attrs(
   id? : String = "",
   class? : String = "",
-  style? : Array[(String, String)] = [],
   attrs? : Array[Attr] = [],
 ) -> Array[Attr] {
   let out : Array[Attr] = []
   if id != "" {
     out.push(Id(id))
   }
+
   if class != "" {
     out.push(Class(class))
-  }
-  if !style.is_empty() {
-    out.push(Style(style))
   }
   attrs.each(fn(a) { out.push(a) })
   out
@@ -2068,7 +1956,29 @@ fn render_attr(attr : Attr) -> String {
     On(KeyUp(js)) => " onkeyup=\"\{js}\""
     On(KeyPress(js)) => " onkeypress=\"\{js}\""
     OnRawEvent(name, js) => " \{name}=\"\{js}\""
+    Data(attr, value) => " data-\{attr}=\"\{value}\""
+    Aria(attr, value) => " aria-\{attr}=\"\{value}\""
   }
+}
+
+///|
+/// Build a node manually — escape hatch for any tag not covered by a
+/// dedicated builder function below.
+///
+/// Example:
+/// `node("marquee", [Attr::Prop("behavior", "scroll")], [text("Hi")])`
+/// -> `<marquee behavior="scroll">Hi</marquee>`
+pub fn node(tag : String, attrs : Array[Attr], children : Array[Html]) -> Html {
+  Node(tag, attrs, children)
+}
+
+///|
+/// Plain (HTML-escaped) text node.
+///
+/// Example:
+/// `text("A & B")` renders as `A &amp; B`
+pub fn text(s : String) -> Html {
+  Text(s)
 }
 
 ///|

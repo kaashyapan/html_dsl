@@ -6,3 +6,5 @@ supported_targets = "+all"
 options(
   "is-main": false,
 )
+
+warnings = "-6"
