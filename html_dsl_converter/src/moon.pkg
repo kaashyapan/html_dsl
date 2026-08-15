@@ -1,0 +1,12 @@
+import {
+  "kaashyapan/html_dsl" @h,
+  "bobzhang/html_parser",
+}
+
+supported_targets = "+all"
+
+warnings = "-6"
+
+options(
+  "is-main": false,
+)

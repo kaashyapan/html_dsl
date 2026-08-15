@@ -51,3 +51,88 @@ test "login_snippet" {
   let actual = render(snippet)
   assert_eq(actual, expected)
 }
+
+///|
+test "nothing renders empty" {
+  assert_eq(render(nothing()), "")
+}
+
+///|
+test "fragment renders children without a wrapper" {
+  assert_eq(render(fragment([text("A"), text("B")])), "AB")
+}
+
+///|
+test "fragment with no children renders empty" {
+  assert_eq(render(fragment([])), "")
+}
+
+///|
+test "unsafe renders raw html verbatim" {
+  assert_eq(render(raw_html("<b>x</b>")), "<b>x</b>")
+}
+
+///|
+test "comment renders a comment" {
+  assert_eq(render(comment("a note")), "<!--a note-->")
+}
+
+///|
+test "comment sanitizes double dashes" {
+  assert_eq(render(comment("a -- b")), "<!--a - - b-->")
+}
+
+///|
+test "comment sanitizes a trailing dash" {
+  assert_eq(render(comment("a-")), "<!--a- -->")
+}
+
+///|
+test "comment sanitizes a leading angle bracket" {
+  assert_eq(render(comment(">x")), "<!-- >x-->")
+}
+
+///|
+test "comment works inside elements" {
+  assert_eq(
+    render(p([text("a"), comment("note"), text("b")])),
+    "<p>a<!--note-->b</p>",
+  )
+}
+
+///|
+test "doctype renders html by default" {
+  assert_eq(render(doctype()), "<!DOCTYPE html>")
+}
+
+///|
+test "doctype renders a named declaration" {
+  assert_eq(render(doctype(name="svg")), "<!DOCTYPE svg>")
+}
+
+///|
+test "doctype renders a bare declaration" {
+  assert_eq(render(doctype(name="")), "<!DOCTYPE>")
+}
+
+///|
+test "doctype renders a system id" {
+  assert_eq(
+    render(doctype(name="html", system_id="about:legacy-compat")),
+    "<!DOCTYPE html SYSTEM \"about:legacy-compat\">",
+  )
+}
+
+///|
+test "doctype renders public and system ids" {
+  assert_eq(
+    render(
+      doctype(
+        name="html",
+        public_id="-//W3C//DTD HTML 4.01//EN",
+        system_id="http://www.w3.org/TR/html4/strict.dtd",
+      ),
+    ),
+    "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">",
+  )
+}

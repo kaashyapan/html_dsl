@@ -1,6 +1,6 @@
-name = "kaashyapan/html_dsl"
+name = "kaashyapan/html_dsl_converter"
 
-version = "0.3.0"
+version = "0.1.0"
 
 readme = "README.mbt.md"
 
@@ -12,4 +12,9 @@ keywords = [ "html", "dsl", "svg" ]
 
 description = "Type safe HTML & SVG DSL to build html for server rendered HTML. Modelled after Rabbita and Luna."
 
-source = "src"
+source = "."
+
+import {
+  "kaashyapan/html_dsl@0.3.0",
+  "bobzhang/html_parser@0.1.7",
+}

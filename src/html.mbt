@@ -159,6 +159,9 @@ pub enum Html {
   Unsafe(String)
   /// Renders nothing (useful as a conditional placeholder)
   Nothing
+  /// An HTML comment; the data is sanitized by `comment` so the rendered
+  /// output is always a valid comment.
+  Comment(String)
 }
 
 // =============================================================================
@@ -1982,6 +1985,102 @@ pub fn text(s : String) -> Html {
 }
 
 ///|
+/// A node that renders to nothing — useful as a conditional placeholder.
+///
+/// Example:
+/// `if is_logged_in { span([text("Hi!")]) } else { nothing() }`
+/// -> `` (empty string) when `is_logged_in` is `false`
+pub fn nothing() -> Html {
+  Nothing
+}
+
+///|
+/// A fragment that renders its children with no wrapping element.
+///
+/// Example:
+/// `fragment([text("A"), text("B")])` -> `AB`
+pub fn fragment(children : Array[Html]) -> Html {
+  Fragment(children)
+}
+
+///|
+/// Raw, un-escaped HTML dropped verbatim into the output.
+///
+/// Use with care — nothing here is sanitized, so never build this from
+/// untrusted input.
+pub fn raw_html(s : String) -> Html {
+  Unsafe(s)
+}
+
+///|
+/// An HTML comment.
+///
+/// The data is sanitized so the rendered output is always a valid comment:
+/// `--` is rewritten to `- -`, a leading `>` or `->` is prefixed with a
+/// space, and a trailing `<!-` or `-` is suffixed with a space.
+///
+/// Example:
+/// `comment("a note")` -> `<!--a note-->`
+pub fn comment(data : String) -> Html {
+  Comment(comment_data(data))
+}
+
+///|
+/// Sanitize comment data so it can never contain `-->` or end with `-`.
+fn comment_data(data : String) -> String {
+  let mut out = data.replace_all(old="--", new="- -")
+  if out.has_prefix(">") || out.has_prefix("->") {
+    out = " " + out
+  }
+  if out.has_suffix("<!-") || out.has_suffix("-") {
+    out = out + " "
+  }
+  out
+}
+
+///|
+/// A `<!DOCTYPE>` declaration.
+///
+/// `public_id` and `system_id` are optional; a system id alone renders as
+/// `SYSTEM`, a public id together with a system id renders as `PUBLIC`.
+///
+/// Example:
+/// `doctype("html")` -> `<!DOCTYPE html>`
+pub fn doctype(
+  name? : String = "html",
+  public_id? : String,
+  system_id? : String,
+) -> Html {
+  let buf = StringBuilder::new()
+  buf.write_string("<!DOCTYPE")
+  if name != "" {
+    buf.write_char(' ')
+    buf.write_string(name)
+  }
+  match public_id {
+    Some(value) => {
+      buf.write_string(" PUBLIC \"")
+      buf.write_string(value)
+      buf.write_char('"')
+    }
+    None => ()
+  }
+  match system_id {
+    Some(value) => {
+      if public_id is None {
+        buf.write_string(" SYSTEM")
+      }
+      buf.write_string(" \"")
+      buf.write_string(value)
+      buf.write_char('"')
+    }
+    None => ()
+  }
+  buf.write_char('>')
+  buf.to_string() |> raw_html
+}
+
+///|
 /// Core recursive renderer: Html -> String.
 pub fn render(node : Html) -> String {
   match node {
@@ -1989,6 +2088,7 @@ pub fn render(node : Html) -> String {
     Text(s) => escape(s)
     Unsafe(s) => s
     Fragment(children) => children.map(render).join("")
+    Comment(data) => "<!--" + data + "-->"
     Node(tag, attrs, children) => {
       let buf = StringBuilder::new()
       buf.write_char('<')

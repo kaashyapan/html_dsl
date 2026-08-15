@@ -38,6 +38,8 @@ pub fn col(span? : Int, attrs? : Array[Attr]) -> Html
 
 pub fn colgroup(attrs? : Array[Attr], Array[Html]) -> Html
 
+pub fn comment(String) -> Html
+
 pub fn datalist(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
 pub fn dd(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
@@ -51,6 +53,8 @@ pub fn details(id? : String, class? : String, open? : Bool, attrs? : Array[Attr]
 pub fn div(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
 pub fn dl(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
+
+pub fn doctype(name? : String, public_id? : String, system_id? : String) -> Html
 
 pub fn dt(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
@@ -71,6 +75,8 @@ pub fn figure(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) 
 pub fn footer(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
 pub fn form(id? : String, class? : String, action? : String, method_? : String, attrs? : Array[Attr], on_submit_? : String, Array[Html]) -> Html
+
+pub fn fragment(Array[Html]) -> Html
 
 pub fn g(attrs? : Array[SvgAttr], Array[Html]) -> Html
 
@@ -130,6 +136,8 @@ pub fn nav(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> 
 
 pub fn node(String, Array[Attr], Array[Html]) -> Html
 
+pub fn nothing() -> Html
+
 pub fn ol(id? : String, class? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
 pub fn on_blur(String) -> Attr
@@ -175,6 +183,8 @@ pub fn progress(id? : String, class? : String, value? : String, max? : String, a
 pub fn q(id? : String, class? : String, cite? : String, attrs? : Array[Attr], Array[Html]) -> Html
 
 pub fn radial_gradient(id? : String, attrs? : Array[SvgAttr], Array[Html]) -> Html
+
+pub fn raw_html(String) -> Html
 
 pub fn rect(x? : String, y? : String, width? : String, height? : String, rx? : String, ry? : String, attrs? : Array[SvgAttr], children? : Array[Html]) -> Html
 
@@ -322,6 +332,7 @@ pub enum Html {
   Fragment(Array[Html])
   Unsafe(String)
   Nothing
+  Comment(String)
 }
 
 pub(all) enum InputType {
