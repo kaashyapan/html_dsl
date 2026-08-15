@@ -259,3 +259,98 @@ test "print converted html with attributes" {
     "fragment([div(attrs=[Attr::Prop(\"id\", \"a\")], [p([text(\"hi\")])])])",
   )
 }
+
+///|
+test "print svg root with view box" {
+  let node = @h.node("svg", [@h.Attr::Prop("viewBox", "0 0 100 100")], [])
+  assert_eq(print_html_dsl(node), "svg(view_box=\"0 0 100 100\", [])")
+}
+
+///|
+test "print svg circle with fill" {
+  let node = @h.node(
+    "circle",
+    [
+      @h.Attr::Prop("cx", "50"),
+      @h.Attr::Prop("cy", "50"),
+      @h.Attr::Prop("r", "40"),
+      @h.Attr::Prop("fill", "red"),
+    ],
+    [],
+  )
+  assert_eq(
+    print_html_dsl(node),
+    "circle(cx=\"50\", cy=\"50\", r=\"40\", attrs=[SvgAttr::Fill(\"red\")])",
+  )
+}
+
+///|
+test "print svg path" {
+  let node = @h.node("path", [@h.Attr::Prop("d", "M0 0 L10 10")], [])
+  assert_eq(print_html_dsl(node), "path(d=\"M0 0 L10 10\")")
+}
+
+///|
+test "print svg gradient" {
+  let node = @h.node("linearGradient", [@h.Attr::Prop("id", "g")], [
+    @h.node(
+      "stop",
+      [@h.Attr::Prop("offset", "0%"), @h.Attr::Prop("stop-color", "red")],
+      [],
+    ),
+  ])
+  assert_eq(
+    print_html_dsl(node),
+    "linear_gradient(id=\"g\", [stop(offset=\"0%\", attrs=[SvgAttr::StopColor(\"red\")])])",
+  )
+}
+
+///|
+test "print svg text with children" {
+  let node = @h.node("text", [@h.Attr::Prop("x", "10")], [@h.text("hi")])
+  assert_eq(print_html_dsl(node), "text(x=\"10\", [text(\"hi\")])")
+}
+
+///|
+test "print svg clip path" {
+  let node = @h.node("clipPath", [@h.Attr::Prop("id", "c")], [
+    @h.node("rect", [@h.Attr::Prop("width", "10")], []),
+  ])
+  assert_eq(print_html_dsl(node), "clip_path(id=\"c\", [rect(width=\"10\")])")
+}
+
+///|
+test "print svg use element" {
+  let node = @h.node("use", [@h.Attr::Prop("href", "#a")], [])
+  assert_eq(print_html_dsl(node), "use_(href=\"#a\")")
+}
+
+///|
+test "print svg rect with children" {
+  let node = @h.node("rect", [@h.Attr::Prop("width", "10")], [@h.text("x")])
+  assert_eq(print_html_dsl(node), "rect(width=\"10\", children=[text(\"x\")])")
+}
+
+///|
+test "print unknown svg tag falls back to node" {
+  let node = @h.node("feGaussianBlur", [@h.Attr::Prop("stdDeviation", "5")], [])
+  assert_eq(
+    print_html_dsl(node),
+    "node(\"feGaussianBlur\", [Attr::Prop(\"stdDeviation\", \"5\")], [])",
+  )
+}
+
+///|
+test "print svg custom attribute" {
+  let node = @h.node("svg", [@h.Attr::Prop("data-x", "1")], [])
+  assert_eq(
+    print_html_dsl(node),
+    "svg(attrs=[SvgAttr::Custom(\"data-x\", \"1\")], [])",
+  )
+}
+
+///|
+test "print svg node with non-prop attribute falls back to node" {
+  let node = @h.node("svg", [@h.Attr::Id("chart")], [])
+  assert_eq(print_html_dsl(node), "node(\"svg\", [Attr::Id(\"chart\")], [])")
+}

@@ -1,0 +1,116 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "kaashyapan/html_dsl/svg"
+
+import {
+  "kaashyapan/html_dsl/html",
+}
+
+// Values
+pub fn circle(cx? : String, cy? : String, r? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn clip_path(id? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn defs(attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn desc(attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn ellipse(cx? : String, cy? : String, rx? : String, ry? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn g(attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn line(x1? : String, y1? : String, x2? : String, y2? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn linear_gradient(id? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn mask(id? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn on_click(String) -> @html.Attr
+
+pub fn path(d? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn polygon(points? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn polyline(points? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn prop(String, String) -> SvgAttr
+
+pub fn radial_gradient(id? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn rect(x? : String, y? : String, width? : String, height? : String, rx? : String, ry? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn stop(offset? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+pub fn style(Array[(String, String)]) -> SvgAttr
+
+pub fn svg(width? : String, height? : String, view_box? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn text(x? : String, y? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn title(attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn tspan(x? : String, y? : String, attrs? : Array[SvgAttr], Array[@html.Html]) -> @html.Html
+
+pub fn use_(href? : String, attrs? : Array[SvgAttr], children? : Array[@html.Html]) -> @html.Html
+
+// Errors
+
+// Types and methods
+pub(all) enum SvgAttr {
+  X(String)
+  Y(String)
+  X1(String)
+  Y1(String)
+  X2(String)
+  Y2(String)
+  Cx(String)
+  Cy(String)
+  R(String)
+  Rx(String)
+  Ry(String)
+  D(String)
+  Points(String)
+  Width(String)
+  Height(String)
+  ViewBox(String)
+  PreserveAspectRatio(String)
+  Fill(String)
+  FillOpacity(String)
+  FillRule(String)
+  Stroke(String)
+  StrokeWidth(String)
+  StrokeOpacity(String)
+  StrokeLinecap(String)
+  StrokeLinejoin(String)
+  StrokeDasharray(String)
+  StrokeDashoffset(String)
+  Opacity(String)
+  Transform(String)
+  TransformOrigin(String)
+  Offset(String)
+  StopColor(String)
+  StopOpacity(String)
+  GradientUnits(String)
+  GradientTransform(String)
+  PatternUnits(String)
+  PatternContentUnits(String)
+  PatternTransform(String)
+  ClipPath(String)
+  ClipRule(String)
+  Mask(String)
+  MaskUnits(String)
+  MarkerStart(String)
+  MarkerMid(String)
+  MarkerEnd(String)
+  FontFamily(String)
+  FontSize(String)
+  FontWeight(String)
+  TextAnchor(String)
+  DominantBaseline(String)
+  Role(String)
+  AriaLabel(String)
+  Custom(String, String)
+}
+
+// Type aliases
+
+// Traits

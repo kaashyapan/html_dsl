@@ -1,6 +1,6 @@
 name = "kaashyapan/html_dsl"
 
-version = "0.3.0"
+version = "0.5.0"
 
 readme = "README.mbt.md"
 
@@ -10,6 +10,6 @@ license = "Apache-2.0"
 
 keywords = [ "html", "dsl", "svg" ]
 
-description = "Type safe HTML & SVG DSL to build html for server rendered HTML. Modelled after Rabbita and Luna."
+description = "Type safe HTML & SVG DSL to build html for server rendered HTML. Modelled after Rabbita and Luna"
 
 source = "src"

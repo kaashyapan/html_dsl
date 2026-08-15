@@ -1,5 +1,6 @@
 import {
-  "kaashyapan/html_dsl" @h,
+  "kaashyapan/html_dsl/html" @h,
+  "kaashyapan/html_dsl/svg",
   "bobzhang/html_parser",
 }
 

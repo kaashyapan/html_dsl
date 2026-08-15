@@ -89,3 +89,39 @@ test "convert_to_dsl converts multiple top-level nodes to a fragment" {
     "<p>one</p><p>two</p>",
   )
 }
+
+///|
+test "convert_to_dsl converts svg elements" {
+  assert_eq(
+    @h.render(
+      convert_to_dsl(
+        "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\"></circle></svg>",
+      ),
+    ),
+    "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\"></circle></svg>",
+  )
+}
+
+///|
+test "convert_to_dsl converts svg gradients" {
+  assert_eq(
+    @h.render(
+      convert_to_dsl(
+        "<svg><linearGradient id=\"g\"><stop offset=\"0%\" stop-color=\"red\"></stop></linearGradient></svg>",
+      ),
+    ),
+    "<svg><linearGradient id=\"g\"><stop offset=\"0%\" stop-color=\"red\"></stop></linearGradient></svg>",
+  )
+}
+
+///|
+test "convert_to_dsl converts svg titles and text" {
+  assert_eq(
+    @h.render(
+      convert_to_dsl(
+        "<svg><title>T</title><text x=\"10\" y=\"20\">hello</text></svg>",
+      ),
+    ),
+    "<svg><title>T</title><text x=\"10\" y=\"20\">hello</text></svg>",
+  )
+}

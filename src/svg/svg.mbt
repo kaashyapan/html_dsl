@@ -22,6 +22,9 @@
 // =============================================================================
 
 ///|
+using @html {type Attr, type Html}
+
+///|
 /// SVG-specific attributes.
 ///
 /// The enum deliberately uses typed constructors for common SVG attributes
@@ -161,7 +164,7 @@ fn svg_node(
   attrs : Array[SvgAttr],
   children : Array[Html],
 ) -> Html {
-  Node(tag, svg_attrs(attrs), children)
+  @html.node(tag, svg_attrs(attrs), children)
 }
 
 ///|
@@ -344,7 +347,7 @@ pub fn path(
 
 ///|
 /// `<text>`.
-pub fn text_(
+pub fn text(
   x? : String = "",
   y? : String = "",
   attrs? : Array[SvgAttr] = [],
@@ -470,7 +473,7 @@ pub fn use_(
 
 ///|
 /// SVG `<title>`.
-pub fn svg_title(attrs? : Array[SvgAttr] = [], children : Array[Html]) -> Html {
+pub fn title(attrs? : Array[SvgAttr] = [], children : Array[Html]) -> Html {
   svg_node("title", attrs, children)
 }
 
@@ -486,14 +489,14 @@ pub fn desc(attrs? : Array[SvgAttr] = [], children : Array[Html]) -> Html {
 ///
 /// For attributes such as `onclick` this helper provides a convenient
 /// SVG-local spelling while preserving the existing renderer.
-pub fn svg_on_click(js : String) -> Attr {
+pub fn on_click(js : String) -> Attr {
   on_click(js)
 }
 
 ///|
 /// Add a generic HTML attribute to an SVG element when it is not represented
 /// by `SvgAttr`.
-pub fn svg_prop(name : String, value : String) -> SvgAttr {
+pub fn prop(name : String, value : String) -> SvgAttr {
   Custom(name, value)
 }
 
@@ -501,7 +504,7 @@ pub fn svg_prop(name : String, value : String) -> SvgAttr {
 /// Inline SVG style helper.
 ///
 /// Example:
-/// `svg_style([("vector-effect", "non-scaling-stroke")])`
-pub fn svg_style(pairs : Array[(String, String)]) -> SvgAttr {
+/// `style([("vector-effect", "non-scaling-stroke")])`
+pub fn style(pairs : Array[(String, String)]) -> SvgAttr {
   Custom("style", pairs.map(fn(p) { "\{p.0}:\{p.1}" }).join(";"))
 }

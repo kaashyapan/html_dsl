@@ -57,11 +57,14 @@ fn convert_doctype(node : Node) -> @h.Html {
 /// Convert an element node: tag name, attributes, and recursively converted
 /// children.
 ///
-/// `<script>` elements without attributes go through `@h.inline_script`, which
-/// keeps the JS body raw; text content anywhere else is HTML-escaped by
-/// `@h.text`. Doctypes inside elements are dropped because a doctype is not
-/// valid element content.
+/// SVG elements go through the `@svg` builders; `<script>` elements without
+/// attributes go through `@h.inline_script`, which keeps the JS body raw; text
+/// content anywhere else is HTML-escaped by `@h.text`. Doctypes inside
+/// elements are dropped because a doctype is not valid element content.
 fn convert_element(node : Node) -> @h.Html {
+  if is_svg_node(node) {
+    return convert_svg_element(node)
+  }
   if node.name() == "script" && node.attrs().is_empty() {
     return @h.inline_script(text_data(node))
   }
@@ -73,6 +76,128 @@ fn convert_element(node : Node) -> @h.Html {
     }
   }
   @h.node(node.name(), convert_attrs(node), children)
+}
+
+///|
+/// Check whether a parsed element node lives in the SVG namespace.
+fn is_svg_node(node : Node) -> Bool {
+  node.namespace_uri() == Some("svg")
+}
+
+///|
+/// Convert an SVG element using the @svg builder functions.
+///
+/// Every attribute becomes a typed `SvgAttr` (or `Custom` for attributes the
+/// enum does not cover); unknown SVG tags fall back to the generic `node`
+/// builder with plain HTML attributes.
+fn convert_svg_element(node : Node) -> @h.Html {
+  let children : Array[@h.Html] = []
+  for child in node.children() {
+    match child.kind() {
+      NodeKind::Doctype => ()
+      _ => children.push(convert_node(child))
+    }
+  }
+  let attrs = convert_svg_attrs(node)
+  match node.name() {
+    "svg" => @svg.svg(attrs~, children)
+    "g" => @svg.g(attrs~, children)
+    "rect" => @svg.rect(attrs~, children~)
+    "circle" => @svg.circle(attrs~, children~)
+    "ellipse" => @svg.ellipse(attrs~, children~)
+    "line" => @svg.line(attrs~, children~)
+    "polyline" => @svg.polyline(attrs~, children~)
+    "polygon" => @svg.polygon(attrs~, children~)
+    "path" => @svg.path(attrs~, children~)
+    "text" => @svg.text(attrs~, children)
+    "tspan" => @svg.tspan(attrs~, children)
+    "defs" => @svg.defs(attrs~, children)
+    "linearGradient" => @svg.linear_gradient(attrs~, children)
+    "radialGradient" => @svg.radial_gradient(attrs~, children)
+    "stop" => @svg.stop(attrs~, children~)
+    "clipPath" => @svg.clip_path(attrs~, children)
+    "mask" => @svg.mask(attrs~, children)
+    "use" => @svg.use_(attrs~, children~)
+    "title" => @svg.title(attrs~, children)
+    "desc" => @svg.desc(attrs~, children)
+    _ => @h.node(node.name(), convert_attrs(node), children)
+  }
+}
+
+///|
+/// Convert the attribute map of an SVG element to typed `SvgAttr` values.
+/// Valueless attributes become `Custom(name, "")`.
+fn convert_svg_attrs(node : Node) -> Array[@svg.SvgAttr] {
+  let attrs : Array[@svg.SvgAttr] = []
+  for name, value in node.attrs() {
+    match value {
+      Some(v) => attrs.push(svg_attr_from(name, v))
+      None => attrs.push(@svg.SvgAttr::Custom(name, ""))
+    }
+  }
+  attrs
+}
+
+///|
+/// Build a typed SVG attribute from a parsed attribute name and value.
+/// Names not covered by the `SvgAttr` enum keep their exact spelling via
+/// `Custom`, so nothing is lost.
+fn svg_attr_from(name : String, value : String) -> @svg.SvgAttr {
+  match name {
+    "x" => @svg.SvgAttr::X(value)
+    "y" => @svg.SvgAttr::Y(value)
+    "x1" => @svg.SvgAttr::X1(value)
+    "y1" => @svg.SvgAttr::Y1(value)
+    "x2" => @svg.SvgAttr::X2(value)
+    "y2" => @svg.SvgAttr::Y2(value)
+    "cx" => @svg.SvgAttr::Cx(value)
+    "cy" => @svg.SvgAttr::Cy(value)
+    "r" => @svg.SvgAttr::R(value)
+    "rx" => @svg.SvgAttr::Rx(value)
+    "ry" => @svg.SvgAttr::Ry(value)
+    "d" => @svg.SvgAttr::D(value)
+    "points" => @svg.SvgAttr::Points(value)
+    "width" => @svg.SvgAttr::Width(value)
+    "height" => @svg.SvgAttr::Height(value)
+    "viewBox" => @svg.SvgAttr::ViewBox(value)
+    "preserveAspectRatio" => @svg.SvgAttr::PreserveAspectRatio(value)
+    "fill" => @svg.SvgAttr::Fill(value)
+    "fill-opacity" => @svg.SvgAttr::FillOpacity(value)
+    "fill-rule" => @svg.SvgAttr::FillRule(value)
+    "stroke" => @svg.SvgAttr::Stroke(value)
+    "stroke-width" => @svg.SvgAttr::StrokeWidth(value)
+    "stroke-opacity" => @svg.SvgAttr::StrokeOpacity(value)
+    "stroke-linecap" => @svg.SvgAttr::StrokeLinecap(value)
+    "stroke-linejoin" => @svg.SvgAttr::StrokeLinejoin(value)
+    "stroke-dasharray" => @svg.SvgAttr::StrokeDasharray(value)
+    "stroke-dashoffset" => @svg.SvgAttr::StrokeDashoffset(value)
+    "opacity" => @svg.SvgAttr::Opacity(value)
+    "transform" => @svg.SvgAttr::Transform(value)
+    "transform-origin" => @svg.SvgAttr::TransformOrigin(value)
+    "offset" => @svg.SvgAttr::Offset(value)
+    "stop-color" => @svg.SvgAttr::StopColor(value)
+    "stop-opacity" => @svg.SvgAttr::StopOpacity(value)
+    "gradientUnits" => @svg.SvgAttr::GradientUnits(value)
+    "gradientTransform" => @svg.SvgAttr::GradientTransform(value)
+    "patternUnits" => @svg.SvgAttr::PatternUnits(value)
+    "patternContentUnits" => @svg.SvgAttr::PatternContentUnits(value)
+    "patternTransform" => @svg.SvgAttr::PatternTransform(value)
+    "clip-path" => @svg.SvgAttr::ClipPath(value)
+    "clip-rule" => @svg.SvgAttr::ClipRule(value)
+    "mask" => @svg.SvgAttr::Mask(value)
+    "maskUnits" => @svg.SvgAttr::MaskUnits(value)
+    "marker-start" => @svg.SvgAttr::MarkerStart(value)
+    "marker-mid" => @svg.SvgAttr::MarkerMid(value)
+    "marker-end" => @svg.SvgAttr::MarkerEnd(value)
+    "font-family" => @svg.SvgAttr::FontFamily(value)
+    "font-size" => @svg.SvgAttr::FontSize(value)
+    "font-weight" => @svg.SvgAttr::FontWeight(value)
+    "text-anchor" => @svg.SvgAttr::TextAnchor(value)
+    "dominant-baseline" => @svg.SvgAttr::DominantBaseline(value)
+    "role" => @svg.SvgAttr::Role(value)
+    "aria-label" => @svg.SvgAttr::AriaLabel(value)
+    _ => @svg.SvgAttr::Custom(name, value)
+  }
 }
 
 ///|

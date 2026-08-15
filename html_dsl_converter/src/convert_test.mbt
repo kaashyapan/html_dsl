@@ -92,3 +92,39 @@ test "convert_html prints multiple top-level nodes" {
     "fragment([p([text(\"one\")]), p([text(\"two\")])])",
   )
 }
+
+///|
+test "convert_html prints svg elements" {
+  assert_eq(
+    convert_html(
+      "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\"/></svg>",
+    ),
+    "fragment([svg(view_box=\"0 0 100 100\", [circle(cx=\"50\", cy=\"50\", r=\"40\", attrs=[SvgAttr::Fill(\"red\")])])])",
+  )
+}
+
+///|
+test "convert_html prints svg gradients" {
+  assert_eq(
+    convert_html(
+      "<svg><linearGradient id=\"g\"><stop offset=\"0%\" stop-color=\"red\"/></linearGradient></svg>",
+    ),
+    "fragment([svg([linear_gradient(id=\"g\", [stop(offset=\"0%\", attrs=[SvgAttr::StopColor(\"red\")])])])])",
+  )
+}
+
+///|
+test "convert_html prints svg title and text" {
+  assert_eq(
+    convert_html("<svg><title>T</title><text x=\"10\">hi</text></svg>"),
+    "fragment([svg([title(\"T\"), text(x=\"10\", [text(\"hi\")])])])",
+  )
+}
+
+///|
+test "convert_html prints foreignObject as node with html children" {
+  assert_eq(
+    convert_html("<svg><foreignObject><div>x</div></foreignObject></svg>"),
+    "fragment([svg([node(\"foreignObject\", [], [div([text(\"x\")])])])])",
+  )
+}

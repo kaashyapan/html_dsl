@@ -10,11 +10,11 @@ license = "Apache-2.0"
 
 keywords = [ "html", "dsl", "svg" ]
 
-description = "Type safe HTML & SVG DSL to build html for server rendered HTML. Modelled after Rabbita and Luna."
+description = "Contains functions to convert raw html to MoonBit code (HTML DSL)"
 
 source = "."
 
 import {
-  "kaashyapan/html_dsl@0.3.0",
+  "kaashyapan/html_dsl@0.5.0",
   "bobzhang/html_parser@0.1.7",
 }

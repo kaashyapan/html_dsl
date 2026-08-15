@@ -22,7 +22,8 @@ Add to your `moon.pkg`:
 
 ```json
 import {
-  "kaashyapan/html_dsl"
+  "kaashyapan/html_dsl/html",
+  "kaashyapan/html_dsl/svg"
 }
 ```
 
@@ -365,8 +366,3 @@ pub fn render(node : Html) -> String
 pub fn escape(s : String) -> String
 ```
 
----
-
-## License
-
-APACHE

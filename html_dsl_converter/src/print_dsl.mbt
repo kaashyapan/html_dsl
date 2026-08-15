@@ -57,6 +57,10 @@ fn print_element(
   if tag == "embed" || tag == "source" || tag == "track" {
     return print_media(tag, attrs, children)
   }
+  match svg_tag_shape(tag) {
+    Some(shape) => return print_svg_element(tag, attrs, children, shape)
+    None => ()
+  }
   match tag_shape(tag) {
     None => node_literal(tag, attrs, children)
     Some(shape) => {
@@ -698,5 +702,235 @@ fn bool_lit(b : Bool) -> String {
     "true"
   } else {
     "false"
+  }
+}
+
+///|
+/// The @svg builder for an SVG tag: its function name, the labelled arguments
+/// it accepts (besides children), and whether the children array is positional
+/// (`children:`) or optional (`children? :`, printed only when non-empty).
+fn svg_tag_shape(tag : String) -> TagShape? {
+  match tag {
+    "svg" =>
+      Some({
+        name: "svg",
+        args: ["width", "height", "view_box", "attrs"],
+        children: true,
+        required: [],
+      })
+    "g" => Some({ name: "g", args: ["attrs"], children: true, required: [] })
+    "rect" =>
+      Some({
+        name: "rect",
+        args: ["x", "y", "width", "height", "rx", "ry", "attrs"],
+        children: false,
+        required: [],
+      })
+    "circle" =>
+      Some({
+        name: "circle",
+        args: ["cx", "cy", "r", "attrs"],
+        children: false,
+        required: [],
+      })
+    "ellipse" =>
+      Some({
+        name: "ellipse",
+        args: ["cx", "cy", "rx", "ry", "attrs"],
+        children: false,
+        required: [],
+      })
+    "line" =>
+      Some({
+        name: "line",
+        args: ["x1", "y1", "x2", "y2", "attrs"],
+        children: false,
+        required: [],
+      })
+    "polyline" =>
+      Some({
+        name: "polyline",
+        args: ["points", "attrs"],
+        children: false,
+        required: [],
+      })
+    "polygon" =>
+      Some({
+        name: "polygon",
+        args: ["points", "attrs"],
+        children: false,
+        required: [],
+      })
+    "path" =>
+      Some({ name: "path", args: ["d", "attrs"], children: false, required: [] })
+    "text" =>
+      Some({
+        name: "text",
+        args: ["x", "y", "attrs"],
+        children: true,
+        required: [],
+      })
+    "tspan" =>
+      Some({
+        name: "tspan",
+        args: ["x", "y", "attrs"],
+        children: true,
+        required: [],
+      })
+    "defs" =>
+      Some({ name: "defs", args: ["attrs"], children: true, required: [] })
+    "linearGradient" =>
+      Some({
+        name: "linear_gradient",
+        args: ["id", "attrs"],
+        children: true,
+        required: [],
+      })
+    "radialGradient" =>
+      Some({
+        name: "radial_gradient",
+        args: ["id", "attrs"],
+        children: true,
+        required: [],
+      })
+    "stop" =>
+      Some({
+        name: "stop",
+        args: ["offset", "attrs"],
+        children: false,
+        required: [],
+      })
+    "clipPath" =>
+      Some({
+        name: "clip_path",
+        args: ["id", "attrs"],
+        children: true,
+        required: [],
+      })
+    "mask" =>
+      Some({ name: "mask", args: ["id", "attrs"], children: true, required: [] })
+    "use" =>
+      Some({
+        name: "use_",
+        args: ["href", "attrs"],
+        children: false,
+        required: [],
+      })
+    "title" =>
+      Some({ name: "title", args: ["attrs"], children: true, required: [] })
+    "desc" =>
+      Some({ name: "desc", args: ["attrs"], children: true, required: [] })
+    _ => None
+  }
+}
+
+///|
+/// Print an SVG element with its `@svg` builder.
+///
+/// Generic `Prop` attributes map to the builder's labelled arguments when it
+/// accepts them and to `SvgAttr::...` constructors otherwise; any attribute
+/// that is not a plain `Prop` falls back to the generic `node` builder.
+fn print_svg_element(
+  tag : String,
+  attrs : Array[@h.Attr],
+  children : Array[@h.Html],
+  shape : TagShape,
+) -> String {
+  let parts : Array[String] = []
+  let rest : Array[String] = []
+  for attr in attrs {
+    match attr {
+      @h.Attr::Prop(name, value) => {
+        let arg = svg_labelled_arg(name)
+        if shape.args.contains(arg) {
+          parts.push("\{arg}=\{str_lit(value)}")
+        } else {
+          rest.push(svg_attr_literal(name, value))
+        }
+      }
+      _ => return node_literal(tag, attrs, children)
+    }
+  }
+  if !rest.is_empty() {
+    parts.push("attrs=[\{rest.join(", ")}]")
+  }
+  if shape.children {
+    parts.push("[\{print_children(children)}]")
+  } else if !children.is_empty() {
+    parts.push("children=[\{print_children(children)}]")
+  }
+  "\{shape.name}(\{parts.join(", ")})"
+}
+
+///|
+/// The labelled-argument spelling for an SVG attribute name; only `viewBox`
+/// differs from its attribute spelling (`view_box`).
+fn svg_labelled_arg(name : String) -> String {
+  if name == "viewBox" {
+    return "view_box"
+  }
+  name
+}
+
+///|
+/// Render an SVG attribute as an `SvgAttr::...` constructor call for use
+/// inside an `attrs=[...]` list, using `Custom` when the `SvgAttr` enum has
+/// no variant for the attribute name.
+fn svg_attr_literal(name : String, value : String) -> String {
+  let lit = str_lit(value)
+  match name {
+    "x" => "SvgAttr::X(\{lit})"
+    "y" => "SvgAttr::Y(\{lit})"
+    "x1" => "SvgAttr::X1(\{lit})"
+    "y1" => "SvgAttr::Y1(\{lit})"
+    "x2" => "SvgAttr::X2(\{lit})"
+    "y2" => "SvgAttr::Y2(\{lit})"
+    "cx" => "SvgAttr::Cx(\{lit})"
+    "cy" => "SvgAttr::Cy(\{lit})"
+    "r" => "SvgAttr::R(\{lit})"
+    "rx" => "SvgAttr::Rx(\{lit})"
+    "ry" => "SvgAttr::Ry(\{lit})"
+    "d" => "SvgAttr::D(\{lit})"
+    "points" => "SvgAttr::Points(\{lit})"
+    "width" => "SvgAttr::Width(\{lit})"
+    "height" => "SvgAttr::Height(\{lit})"
+    "viewBox" => "SvgAttr::ViewBox(\{lit})"
+    "preserveAspectRatio" => "SvgAttr::PreserveAspectRatio(\{lit})"
+    "fill" => "SvgAttr::Fill(\{lit})"
+    "fill-opacity" => "SvgAttr::FillOpacity(\{lit})"
+    "fill-rule" => "SvgAttr::FillRule(\{lit})"
+    "stroke" => "SvgAttr::Stroke(\{lit})"
+    "stroke-width" => "SvgAttr::StrokeWidth(\{lit})"
+    "stroke-opacity" => "SvgAttr::StrokeOpacity(\{lit})"
+    "stroke-linecap" => "SvgAttr::StrokeLinecap(\{lit})"
+    "stroke-linejoin" => "SvgAttr::StrokeLinejoin(\{lit})"
+    "stroke-dasharray" => "SvgAttr::StrokeDasharray(\{lit})"
+    "stroke-dashoffset" => "SvgAttr::StrokeDashoffset(\{lit})"
+    "opacity" => "SvgAttr::Opacity(\{lit})"
+    "transform" => "SvgAttr::Transform(\{lit})"
+    "transform-origin" => "SvgAttr::TransformOrigin(\{lit})"
+    "offset" => "SvgAttr::Offset(\{lit})"
+    "stop-color" => "SvgAttr::StopColor(\{lit})"
+    "stop-opacity" => "SvgAttr::StopOpacity(\{lit})"
+    "gradientUnits" => "SvgAttr::GradientUnits(\{lit})"
+    "gradientTransform" => "SvgAttr::GradientTransform(\{lit})"
+    "patternUnits" => "SvgAttr::PatternUnits(\{lit})"
+    "patternContentUnits" => "SvgAttr::PatternContentUnits(\{lit})"
+    "patternTransform" => "SvgAttr::PatternTransform(\{lit})"
+    "clip-path" => "SvgAttr::ClipPath(\{lit})"
+    "clip-rule" => "SvgAttr::ClipRule(\{lit})"
+    "mask" => "SvgAttr::Mask(\{lit})"
+    "maskUnits" => "SvgAttr::MaskUnits(\{lit})"
+    "marker-start" => "SvgAttr::MarkerStart(\{lit})"
+    "marker-mid" => "SvgAttr::MarkerMid(\{lit})"
+    "marker-end" => "SvgAttr::MarkerEnd(\{lit})"
+    "font-family" => "SvgAttr::FontFamily(\{lit})"
+    "font-size" => "SvgAttr::FontSize(\{lit})"
+    "font-weight" => "SvgAttr::FontWeight(\{lit})"
+    "text-anchor" => "SvgAttr::TextAnchor(\{lit})"
+    "dominant-baseline" => "SvgAttr::DominantBaseline(\{lit})"
+    "role" => "SvgAttr::Role(\{lit})"
+    "aria-label" => "SvgAttr::AriaLabel(\{lit})"
+    _ => "SvgAttr::Custom(\{str_lit(name)}, \{lit})"
   }
 }
