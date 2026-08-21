@@ -63,6 +63,11 @@ test "fragment renders children without a wrapper" {
 }
 
 ///|
+test "fragment renders para" {
+  assert_eq(render(p([text("A"), text("B")])), "<p>AB</p>")
+}
+
+///|
 test "fragment with no children renders empty" {
   assert_eq(render(fragment([])), "")
 }

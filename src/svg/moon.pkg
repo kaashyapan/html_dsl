@@ -1,11 +1,7 @@
 import {
-  "kaashyapan/html_dsl/html"
+  "kaashyapan/html_dsl/html",
 }
 
 supported_targets = "+all"
-
-options(
-  "is-main": false,
-)
 
 warnings = "-6"
